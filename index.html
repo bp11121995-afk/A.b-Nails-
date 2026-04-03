@@ -106,19 +106,25 @@ h1 {color:#b30059;margin:0;}
   box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
 
-/* CALENDAR */
+/* CALENDAR (REAL LOOK) */
 #calendar {
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(60px,1fr));
-  gap:5px;
-  max-width:400px;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:8px;
+  max-width:420px;
   margin:20px auto;
 }
 
 .day {
-  padding:10px;
-  border-radius:8px;
+  width:60px;
+  height:60px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:10px;
   color:white;
+  font-weight:bold;
   cursor:pointer;
 }
 
@@ -141,7 +147,17 @@ h1 {color:#b30059;margin:0;}
   color:white;
 }
 
-/* FOOTER */
+/* BUTTON */
+.filter-btn {
+  margin:10px;
+  padding:10px 15px;
+  border:none;
+  background:black;
+  color:white;
+  border-radius:8px;
+  cursor:pointer;
+}
+
 footer {padding:20px;}
 </style>
 </head>
@@ -185,6 +201,8 @@ footer {padding:20px;}
 
   <h3 id="spotsInfo"></h3>
 
+  <button class="filter-btn" onclick="toggleAvailable()">Show Only Available Dates</button>
+
   <div id="calendar"></div>
 
   <div id="timesSection" style="display:none;">
@@ -207,6 +225,7 @@ const spotsInfo = document.getElementById("spotsInfo");
 
 let totalSpots = 50;
 let availableSpots = 10;
+let showOnlyAvailable = false;
 
 function updateSpots() {
   spotsInfo.innerText = `${availableSpots}/${totalSpots} spots left this month`;
@@ -221,15 +240,16 @@ function generateCalendar() {
     date.setDate(today.getDate() + i);
 
     let day = date.getDay();
-
     let div = document.createElement("div");
     div.classList.add("day");
     div.innerText = date.getDate();
 
+    let isAvailable = (day === 1 || day === 3 || day === 5) && availableSpots > 0;
+
     if (day === 0) {
       div.classList.add("closed");
     }
-    else if ((day === 1 || day === 3 || day === 5) && availableSpots > 0) {
+    else if (isAvailable) {
       div.classList.add("available");
       div.onclick = () => showTimes(date.toDateString());
     }
@@ -237,8 +257,17 @@ function generateCalendar() {
       div.classList.add("full");
     }
 
-    calendar.appendChild(div);
+    if (showOnlyAvailable) {
+      if (isAvailable) calendar.appendChild(div);
+    } else {
+      calendar.appendChild(div);
+    }
   }
+}
+
+function toggleAvailable() {
+  showOnlyAvailable = !showOnlyAvailable;
+  generateCalendar();
 }
 
 function showTimes(dateText) {
@@ -262,7 +291,6 @@ function showTimes(dateText) {
         availableSpots--;
         updateSpots();
         generateCalendar();
-
         window.open(`https://wa.me/35699758628?text=Book ${dateText} ${t}`);
       };
     } else {
@@ -275,7 +303,7 @@ function showTimes(dateText) {
 }
 
 function goBack() {
-  calendar.style.display = "grid";
+  calendar.style.display = "flex";
   timesSection.style.display = "none";
 }
 
