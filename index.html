@@ -43,7 +43,7 @@ h1 {color:#b30059;margin:0;}
   text-decoration:none;
 }
 
-/* ROAD + CAR (UNCHANGED) */
+/* ROAD + CAR */
 .road {
   margin-top:30px;
   height:80px;
@@ -70,32 +70,7 @@ h1 {color:#b30059;margin:0;}
   100% {left:110%;}
 }
 
-/* SERVICES */
-.section {padding:50px 20px;}
-.cards {
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:10px;
-}
-.card {
-  background:white;
-  padding:15px;
-  border-radius:10px;
-  width:200px;
-  box-shadow:0 5px 15px rgba(0,0,0,0.1);
-}
-
 /* CALENDAR */
-.calendar-controls {
-  margin:10px;
-}
-
-select {
-  padding:8px;
-  border-radius:8px;
-}
-
 .calendar {
   max-width:420px;
   margin:20px auto;
@@ -126,25 +101,6 @@ select {
 .full {background:#e74c3c; color:white;}
 .closed {background:#777; color:white;}
 .past {background:#bbb; pointer-events:none;}
-
-/* TIME BOX */
-#timesBox {
-  display:none;
-  max-width:300px;
-  margin:auto;
-}
-
-.time {
-  padding:10px;
-  margin:5px;
-  border-radius:8px;
-  background:#e74c3c;
-  color:white;
-}
-.time.active {
-  background:#2ecc71;
-  cursor:pointer;
-}
 </style>
 </head>
 
@@ -161,29 +117,12 @@ select {
 </div>
 </header>
 
-<div class="section">
-<h2>💅 Booking Calendar (3 Months)</h2>
-
-<div class="calendar-controls">
-<select id="monthSelect" onchange="renderCalendar()">
-  <option value="3">April</option>
-  <option value="4">May</option>
-  <option value="5">June</option>
-</select>
-</div>
-
 <div class="calendar">
   <div class="weekdays">
     <div>Mon</div><div>Tue</div><div>Wed</div>
     <div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
   </div>
   <div id="days" class="days"></div>
-</div>
-
-<div id="timesBox">
-<h3 id="selectedDate"></h3>
-<div id="times"></div>
-</div>
 </div>
 
 <script>
@@ -201,9 +140,8 @@ function getMonthData(monthIndex){
 
     let day = d.getDay();
 
-    if(day === 0) continue; // Sunday closed
+    if(day === 0) continue; // Sunday excluded from availability
 
-    // 1 random slot per day available
     if(Math.random() > 0.5){
       data[d.toDateString()] = true;
     }
@@ -212,12 +150,9 @@ function getMonthData(monthIndex){
   return data;
 }
 
-let availability = {};
+let availability = getMonthData(new Date().getMonth());
 
 function renderCalendar(){
-  let month = parseInt(document.getElementById("monthSelect").value);
-  availability = getMonthData(month);
-
   let container = document.getElementById("days");
   container.innerHTML = "";
 
@@ -227,22 +162,23 @@ function renderCalendar(){
     let d = new Date();
     d.setDate(today.getDate()+i);
 
-    if(d.getMonth() !== month) continue;
+    if(d.getMonth() !== today.getMonth()) continue;
+
+    let day = d.getDay();
 
     let div = document.createElement("div");
     div.className = "day";
     div.innerText = d.getDate();
 
-    let day = d.getDay();
-    let isAvailable = availability[d.toDateString()];
-
-    if(d < new Date().setHours(0,0,0,0)){
+    // ❌ SUNDAY CLOSED (FIXED)
+    if(day === 0){
+      div.classList.add("closed");
+      div.style.pointerEvents = "none";
+    }
+    else if(d < new Date().setHours(0,0,0,0)){
       div.classList.add("past");
     }
-    else if(day === 0){
-      div.classList.add("closed");
-    }
-    else if(isAvailable){
+    else if(availability[d.toDateString()]){
       div.classList.add("available");
       div.onclick = () => openTimes(d.toDateString());
     }
@@ -255,34 +191,13 @@ function renderCalendar(){
 }
 
 function openTimes(date){
-  document.getElementById("timesBox").style.display="block";
-  document.getElementById("selectedDate").innerText=date;
-
-  let box = document.getElementById("times");
-  box.innerHTML="";
-
-  let activeTime = timesList[Math.floor(Math.random()*timesList.length)];
-
-  timesList.forEach(t=>{
-    let div = document.createElement("div");
-    div.className="time";
-
-    if(t === activeTime){
-      div.classList.add("active");
-      div.innerText="🟢 "+t;
-
-      div.onclick=()=>{
-        window.open(
-          "https://wa.me/35699758628?text=" +
-          encodeURIComponent("Booking "+date+" at "+t)
-        );
-      };
-    } else {
-      div.innerText="🔴 "+t;
-    }
-
-    box.appendChild(div);
-  });
+  let times = prompt("Choose time:\n" + timesList.join(", "));
+  if(times){
+    window.open(
+      "https://wa.me/35699758628?text=" +
+      encodeURIComponent("Booking "+date+" at "+times)
+    );
+  }
 }
 
 renderCalendar();
