@@ -3,50 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>A.D Nails Malta</title>
+<title>A.D Nails Calendar</title>
 
 <style>
 body {
   margin:0;
   font-family:Arial;
   text-align:center;
-  overflow-x:hidden;
+  background:#fafafa;
 }
-
-/* BACKGROUND */
-body::before, body::after {
-  content:"";
-  position:fixed;
-  width:400px;
-  height:400px;
-  border-radius:50%;
-  filter:blur(120px);
-  z-index:-1;
-}
-body::before { background:#ffb6d5; top:-100px; left:-100px; }
-body::after { background:#c77dff; bottom:-100px; right:-100px; }
 
 /* HEADER */
 header {
-  padding:70px 20px;
+  padding:40px 20px;
   background:linear-gradient(#ffb6d5,#ffe6f0);
 }
-h1 {color:#b30059;margin:0;}
-.since {font-size:14px;}
-.btn {
-  margin-top:15px;
-  display:inline-block;
-  padding:12px 20px;
-  background:#25D366;
-  color:white;
-  border-radius:10px;
-  text-decoration:none;
-}
 
-/* ROAD + CAR */
+h1 {margin:0;color:#b30059;}
+
+/* CAR */
 .road {
-  margin-top:30px;
-  height:80px;
+  margin-top:15px;
+  height:70px;
   background:#222;
   position:relative;
   overflow:hidden;
@@ -54,26 +32,36 @@ h1 {color:#b30059;margin:0;}
 }
 .car {
   position:absolute;
-  top:20px;
-  font-size:35px;
+  top:15px;
+  font-size:30px;
   animation:drive 5s linear infinite;
-  transform:scaleX(-1);
-}
-.home {
-  position:absolute;
-  right:10px;
-  top:18px;
-  font-size:35px;
 }
 @keyframes drive {
-  0% {left:-80px;}
-  100% {left:110%;}
+  0%{left:-60px;}
+  100%{left:110%;}
+}
+
+/* MONTH BUTTONS */
+.months {
+  margin:15px;
+}
+.months button {
+  padding:10px 15px;
+  margin:5px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  background:#ddd;
+}
+.months button.active {
+  background:#b30059;
+  color:white;
 }
 
 /* CALENDAR */
 .calendar {
   max-width:420px;
-  margin:20px auto;
+  margin:auto;
 }
 
 .weekdays, .days {
@@ -83,24 +71,29 @@ h1 {color:#b30059;margin:0;}
 }
 
 .weekdays div {
-  font-weight:bold;
   font-size:12px;
-  padding:5px;
+  font-weight:bold;
 }
 
 .day {
-  padding:12px;
+  padding:10px;
   border-radius:8px;
   font-weight:bold;
+  background:#eee;
   cursor:pointer;
-  background:#ddd;
 }
 
 /* STATES */
-.available {background:#2ecc71; color:white;}
-.full {background:#e74c3c; color:white;}
-.closed {background:#777; color:white;}
-.past {background:#bbb; pointer-events:none;}
+.available {background:#2ecc71;color:white;}
+.full {background:#e74c3c;color:white;}
+.closed {background:#777;color:white;}
+.past {background:#bbb;pointer-events:none;}
+.empty {background:transparent;}
+.counter {
+  font-size:10px;
+  display:block;
+  margin-top:3px;
+}
 </style>
 </head>
 
@@ -108,14 +101,16 @@ h1 {color:#b30059;margin:0;}
 
 <header>
 <h1>A.D Nails 💅</h1>
-<div class="since">Since 2020</div>
-<a class="btn" href="https://wa.me/35699758628">Book on WhatsApp</a>
-
 <div class="road">
   <div class="car">🚗</div>
-  <div class="home">🏠</div>
 </div>
 </header>
+
+<div class="months">
+  <button onclick="setMonth(3,this)">April</button>
+  <button onclick="setMonth(4,this)">May</button>
+  <button onclick="setMonth(5,this)">June</button>
+</div>
 
 <div class="calendar">
   <div class="weekdays">
@@ -126,81 +121,102 @@ h1 {color:#b30059;margin:0;}
 </div>
 
 <script>
-let timesList = ["08:00","10:00","12:00","14:00","16:00"];
 
-function getMonthData(monthIndex){
-  let today = new Date();
-  let data = {};
+let today = new Date("2026-04-03");
+let year = 2026;
+let currentMonth = 3;
 
-  for(let i=0;i<90;i++){
-    let d = new Date();
-    d.setDate(today.getDate()+i);
+function setMonth(m,btn){
+  currentMonth = m;
 
-    if(d.getMonth() !== monthIndex) continue;
+  document.querySelectorAll(".months button")
+  .forEach(b=>b.classList.remove("active"));
 
-    let day = d.getDay();
+  btn.classList.add("active");
 
-    if(day === 0) continue; // Sunday excluded from availability
-
-    if(Math.random() > 0.5){
-      data[d.toDateString()] = true;
-    }
-  }
-
-  return data;
+  render(m);
 }
 
-let availability = getMonthData(new Date().getMonth());
+function getSlots(){
+  let max = 5;
+  let used = Math.floor(Math.random()*6); // 0-5
+  if(used>5) used=5;
+  return {used, free:max-used};
+}
 
-function renderCalendar(){
+function getDays(month){
+  let first = new Date(year, month, 1);
+  let last = new Date(year, month+1, 0);
+
+  let arr=[];
+  for(let d=new Date(first); d<=last; d.setDate(d.getDate()+1)){
+    arr.push(new Date(d));
+  }
+  return arr;
+}
+
+function render(month){
   let container = document.getElementById("days");
-  container.innerHTML = "";
+  container.innerHTML="";
 
-  let today = new Date();
+  let days = getDays(month);
+  let offset = (days[0].getDay()+6)%7;
 
-  for(let i=0;i<90;i++){
-    let d = new Date();
-    d.setDate(today.getDate()+i);
+  for(let i=0;i<offset;i++){
+    let e=document.createElement("div");
+    e.className="empty";
+    container.appendChild(e);
+  }
 
-    if(d.getMonth() !== today.getMonth()) continue;
+  days.forEach(date=>{
+    let div=document.createElement("div");
+    div.className="day";
+    div.innerText=date.getDate();
 
-    let day = d.getDay();
+    let day=date.getDay();
+    let slots=getSlots();
 
-    let div = document.createElement("div");
-    div.className = "day";
-    div.innerText = d.getDate();
+    let isPast = date < today;
 
-    // ❌ SUNDAY CLOSED (FIXED)
-    if(day === 0){
-      div.classList.add("closed");
-      div.style.pointerEvents = "none";
-    }
-    else if(d < new Date().setHours(0,0,0,0)){
+    // PAST
+    if(isPast){
       div.classList.add("past");
     }
-    else if(availability[d.toDateString()]){
-      div.classList.add("available");
-      div.onclick = () => openTimes(d.toDateString());
+
+    // JUNE SUNDAY CLOSED
+    else if(month===5 && day===0){
+      div.classList.add("closed");
+      div.innerHTML=date.getDate()+"<span class='counter'>Closed</span>";
     }
+
     else {
-      div.classList.add("full");
+      if(slots.free<=0){
+        div.classList.add("full");
+        div.innerHTML=date.getDate()+"<span class='counter'>FULL</span>";
+      } else {
+        div.classList.add("available");
+        div.innerHTML=date.getDate()+"<span class='counter'>"+slots.free+"/5</span>";
+
+        div.onclick=()=>{
+          let times=["08:00","10:00","12:00","14:00","16:00"];
+          let time=prompt("Choose time:\n"+times.join(", "));
+          if(time){
+            window.open(
+              "https://wa.me/35699758628?text="+
+              encodeURIComponent("Booking "+date.toDateString()+" at "+time)
+            );
+          }
+        };
+      }
     }
 
     container.appendChild(div);
-  }
+  });
 }
 
-function openTimes(date){
-  let times = prompt("Choose time:\n" + timesList.join(", "));
-  if(times){
-    window.open(
-      "https://wa.me/35699758628?text=" +
-      encodeURIComponent("Booking "+date+" at "+times)
-    );
-  }
-}
+// default
+setMonth(3, document.querySelectorAll(".months button")[0]);
 
-renderCalendar();
 </script>
 
 </body>
