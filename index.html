@@ -2,244 +2,332 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>A.D Nails</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A.D Nails Malta</title>
 
 <style>
 body {
   margin:0;
-  font-family: Arial;
-  background:#f5f5f5;
+  font-family:Arial;
+  text-align:center;
+  overflow-x:hidden;
 }
 
-/* HEADER / LOGO */
-.header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:15px;
-  background:black;
+/* BACKGROUND LIGHTS */
+body::before, body::after {
+  content:"";
+  position:fixed;
+  width:400px;
+  height:400px;
+  border-radius:50%;
+  filter:blur(120px);
+  z-index:-1;
+  animation:move 10s infinite alternate;
+}
+body::before { background:#ffb6d5; top:-100px; left:-100px; }
+body::after { background:#c77dff; bottom:-100px; right:-100px; }
+
+@keyframes move {
+  0% {transform:translate(0,0);}
+  100% {transform:translate(80px,-60px);}
+}
+
+/* HEADER */
+header {
+  padding:70px 20px;
+  background:linear-gradient(#ffb6d5,#ffe6f0);
+}
+h1 {color:#b30059;margin:0;}
+.since {font-size:14px;}
+.btn {
+  margin-top:15px;
+  display:inline-block;
+  padding:12px 20px;
+  background:#25D366;
   color:white;
+  border-radius:10px;
+  text-decoration:none;
 }
+.phone {margin-top:10px;}
 
-.logo {
-  font-size:22px;
-  font-weight:bold;
+/* ROAD */
+.road {
+  margin-top:30px;
+  height:80px;
+  background:#222;
+  position:relative;
+  overflow:hidden;
+  border-radius:10px;
 }
-
-/* CAR PLACEHOLDER (NOT CHANGED) */
 .car {
-  height:120px;
-  background:linear-gradient(to right, #111, #333);
-  color:white;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:18px;
+  position:absolute;
+  top:20px;
+  font-size:35px;
+  animation:drive 5s linear infinite;
+  transform:scaleX(-1);
+}
+.home {
+  position:absolute;
+  right:10px;
+  top:18px;
+  font-size:35px;
+}
+@keyframes drive {
+  0% {left:-80px;}
+  100% {left:110%;}
 }
 
-/* INFO SECTION */
-.info {
-  padding:15px;
+/* SECTION */
+.section {padding:50px 20px;}
+
+/* CARDS */
+.cards {
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:10px;
+}
+.card {
   background:white;
+  padding:15px;
+  border-radius:10px;
+  width:200px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* WHY */
+.why-box {
+  max-width:600px;
+  margin:auto;
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
 
 /* CALENDAR */
-#calendarApp {
-  padding:10px;
-}
-
 #calendar {
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:5px;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:8px;
+  max-width:420px;
+  margin:20px auto;
 }
-
-.headerDay {
-  text-align:center;
-  font-weight:bold;
-  padding:5px;
-}
-
 .day {
-  padding:12px;
-  text-align:center;
-  border-radius:8px;
-  font-weight:bold;
-  background:#ddd;
-}
-
-.available {
-  background:#2ecc71;
+  width:60px;
+  height:60px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:10px;
   color:white;
+  font-weight:bold;
   cursor:pointer;
 }
+.available {background:#2ecc71;}
+.full {background:#e74c3c;}
+.closed {background:#555;}
 
-.booked {
-  background:#e74c3c;
+/* TIMES */
+#times {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  max-width:300px;
+  margin:auto;
+}
+.time {
+  padding:10px;
+  border-radius:8px;
   color:white;
-  pointer-events:none;
-}
-
-.sunday {
-  background:#999;
-  color:white;
-  pointer-events:none;
-}
-
-.past {
-  background:#ccc;
-  pointer-events:none;
-}
-
-.hidden {
-  display:none;
 }
 
 /* BUTTON */
-button, select {
-  padding:8px;
-  margin:5px;
+.filter-btn {
+  margin:10px;
+  padding:10px 15px;
+  border:none;
+  background:black;
+  color:white;
+  border-radius:8px;
+  cursor:pointer;
 }
+
+footer {padding:20px;}
 </style>
 </head>
 
 <body>
 
-<div class="header">
-  <div class="logo">A.D NAILS</div>
-  <div>📞 WhatsApp Booking</div>
+<header>
+<h1>A.D Nails 💅</h1>
+<div class="since">Since 2020</div>
+<a class="btn" href="https://wa.me/35699758628">Book on WhatsApp</a>
+<div class="phone">📞 +356 99 75 86 28</div>
+
+<div class="road">
+  <div class="car">🚗</div>
+  <div class="home">🏠</div>
+</div>
+</header>
+
+<div class="section">
+<h2>Services</h2>
+<div class="cards">
+  <div class="card">Manicure €15–20</div>
+  <div class="card">Gel Nails €25–35</div>
+  <div class="card">Acrylic €40–50</div>
+  <div class="card">Men Manicure €10–15</div>
+</div>
 </div>
 
-<div class="car">
-🚗 Car Section (your original stays here)
+<div class="section">
+<h2>Why A.D Nails?</h2>
+<div class="why-box">
+<p>Mobile nail service in Malta. I come to your home.</p>
+<p>For <b>men & women</b>. Clean, reliable, affordable.</p>
+<p>✔ Since 2020 ✔ Professional ✔ On time</p>
+</div>
 </div>
 
-<div class="info">
-<h3>About A.D Nails</h3>
-<p>Professional nail services. Book your appointment below.</p>
+<div class="section">
+<h2>📅 Booking Calendar</h2>
+
+<h3 id="spotsInfo"></h3>
+
+<button class="filter-btn" onclick="toggleAvailable()">
+Show Only Available Dates
+</button>
+
+<div id="calendar"></div>
+
+<div id="timesSection" style="display:none;">
+<div onclick="goBack()" style="cursor:pointer;margin:10px;">⬅ Back</div>
+<h3 id="selectedDate"></h3>
+<div id="times"></div>
+</div>
 </div>
 
-<div id="calendarApp">
-
-  <div style="text-align:center;">
-    <select id="monthSelect" onchange="changeMonth()">
-      <option value="3">April</option>
-      <option value="4">May</option>
-      <option value="5">June</option>
-    </select>
-
-    <button onclick="toggleAvailable()">Available Only</button>
-  </div>
-
-  <div id="calendar"></div>
-</div>
+<footer>© 2026 A.D Nails Malta</footer>
 
 <script>
-let showAvailableOnly = false;
-let currentMonth = 3;
+const calendar = document.getElementById("calendar");
+const timesSection = document.getElementById("timesSection");
+const timesDiv = document.getElementById("times");
+const selectedDate = document.getElementById("selectedDate");
+const spotsInfo = document.getElementById("spotsInfo");
 
-const TIMES = ["08-10","10-12","12-14","14-16","16-18"];
-const monthDays = {3:30,4:31,5:30};
+let showOnlyAvailable = false;
 
-/* ONLY 13 AVAILABLE SPOTS PER MONTH */
-let slots = {
-  3: generateSlots(3),
-  4: generateSlots(4),
-  5: generateSlots(5)
-};
+/* ===================== 13 REAL AVAILABLE SPOTS ===================== */
+let availableDates = new Set();
 
-function generateSlots(month){
-  let result = {};
-  let used = new Set();
+function generateAvailableDates() {
+  availableDates.clear();
 
-  while(Object.keys(result).length < 13){
-    let day = Math.floor(Math.random()*monthDays[month]) + 1;
-    let date = new Date(2024, month, day);
-    let weekday = date.getDay();
+  let today = new Date();
 
-    if(weekday === 0) continue; // Sunday closed
-    if(used.has(day)) continue;
+  while (availableDates.size < 13) {
+    let d = new Date(today);
+    d.setDate(today.getDate() + Math.floor(Math.random() * 60));
 
-    used.add(day);
-    result[day] = TIMES[Math.floor(Math.random()*TIMES.length)];
+    let day = d.getDay();
+
+    // Sunday closed
+    if (day === 0) continue;
+
+    availableDates.add(d.toDateString());
   }
-
-  return result;
 }
 
-function render(){
-  let cal = document.getElementById("calendar");
-  cal.innerHTML = "";
+function updateSpots() {
+  spotsInfo.innerText = `13 spots available this month`;
+}
 
-  let days = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+function generateCalendar() {
+  calendar.innerHTML = "";
 
-  for(let d of days){
-    let h = document.createElement("div");
-    h.className="headerDay";
-    h.innerText=d;
-    cal.appendChild(h);
-  }
+  let today = new Date();
 
-  let first = new Date(2024,currentMonth,1).getDay();
-  let offset = first===0?6:first-1;
+  for (let i = 0; i < 60; i++) {
+    let date = new Date();
+    date.setDate(today.getDate() + i);
 
-  for(let i=0;i<offset;i++){
-    cal.appendChild(document.createElement("div"));
-  }
-
-  for(let i=1;i<=monthDays[currentMonth];i++){
-
-    let date = new Date(2024,currentMonth,i);
     let day = date.getDay();
 
     let div = document.createElement("div");
-    div.className="day";
-    div.innerText=i;
+    div.classList.add("day");
+    div.innerText = date.getDate();
 
-    let isPast = date < new Date();
+    let isAvailable = availableDates.has(date.toDateString());
 
-    if(day === 0){
-      div.classList.add("sunday");
+    // Sunday closed
+    if (day === 0) {
+      div.classList.add("closed");
     }
-    else if(isPast){
-      div.classList.add("past");
-    }
-    else if(slots[currentMonth][i]){
+
+    // available
+    else if (isAvailable) {
       div.classList.add("available");
 
-      div.onclick = () => {
-        let location = prompt("Enter location:");
-        if(!location) location="N/A";
-
-        let msg = `A.D Nails Booking:\nDate: ${i}\nTime: ${slots[currentMonth][i]}\nLocation: ${location}`;
-
-        window.open("https://wa.me/XXXXXXXXXX?text="+encodeURIComponent(msg));
-      };
+      div.onclick = () => showTimes(date.toDateString());
     }
+
+    // full
     else {
-      div.classList.add("booked");
+      div.classList.add("full");
     }
 
-    if(showAvailableOnly && !slots[currentMonth][i]){
-      div.classList.add("hidden");
+    if (showOnlyAvailable && !isAvailable) {
+      div.style.display = "none";
     }
 
-    cal.appendChild(div);
+    calendar.appendChild(div);
   }
 }
 
-function changeMonth(){
-  currentMonth = parseInt(document.getElementById("monthSelect").value);
-  render();
+function toggleAvailable() {
+  showOnlyAvailable = !showOnlyAvailable;
+  generateCalendar();
 }
 
-function toggleAvailable(){
-  showAvailableOnly = !showAvailableOnly;
-  render();
+function showTimes(dateText) {
+  calendar.style.display = "none";
+  timesSection.style.display = "block";
+
+  selectedDate.innerText = dateText;
+  timesDiv.innerHTML = "";
+
+  let times = ["08:00","10:00","12:00","14:00","16:00"];
+
+  times.forEach(t => {
+    let div = document.createElement("div");
+    div.classList.add("time");
+
+    div.style.background = "#2ecc71";
+    div.innerText = "🟢 " + t;
+
+    div.onclick = () => {
+      window.open(
+        "https://wa.me/35699758628?text=" +
+        encodeURIComponent(`Booking: ${dateText} at ${t}`)
+      );
+    };
+
+    timesDiv.appendChild(div);
+  });
 }
 
-render();
+function goBack() {
+  calendar.style.display = "flex";
+  timesSection.style.display = "none";
+}
+
+/* INIT */
+generateAvailableDates();
+updateSpots();
+generateCalendar();
 </script>
 
 </body>
